@@ -1,551 +1,621 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technology & Security | Financial Services</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- GSAP for Animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <!-- Three.js for Hero Graphic -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Technology & Security | Financial Services</title>
+        
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <!-- GSAP for Animations -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        
+        <!-- Three.js for Hero Graphic -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            900: '#0f172a',
-                            800: '#1e293b',
-                            700: '#334155',
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            slate: {
+                                900: '#0f172a',
+                                800: '#1e293b',
+                                700: '#334155',
+                            },
+                            metal: {
+                                light: '#e2e8f0', // Lighter for visibility
+                                dark: '#475569'
+                            }
                         },
-                        metal: {
-                            light: '#94a3b8',
-                            dark: '#475569'
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif'],
+                            display: ['Syne', 'sans-serif'],
+                        },
+                        backgroundImage: {
+                            'metallic-gradient': 'linear-gradient(135deg, rgba(30, 41, 59, 1) 0%, rgba(51, 65, 85, 1) 50%, rgba(30, 41, 59, 1) 100%)',
                         }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Syne', 'sans-serif'],
-                    },
-                    backgroundImage: {
-                        'metallic-gradient': 'linear-gradient(135deg, rgba(30, 41, 59, 1) 0%, rgba(51, 65, 85, 1) 50%, rgba(30, 41, 59, 1) 100%)',
-                        'metallic-shine': 'linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 55%, transparent 60%)'
                     }
                 }
             }
-        }
-    </script>
+        </script>
 
-    <style>
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            cursor: none;
-            overflow-x: hidden;
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Custom Cursor */
-        .cursor-dot, .cursor-outline {
-            position: fixed;
-            top: 0; left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 9999;
-            pointer-events: none;
-        }
-        .cursor-dot { width: 8px; height: 8px; background-color: white; }
-        .cursor-outline {
-            width: 40px; height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        body:hover .cursor-outline.hovered {
-            width: 60px; height: 60px;
-            background-color: rgba(99, 102, 241, 0.2);
-            border-color: #6366f1;
-            backdrop-filter: blur(2px);
-        }
-
-        /* --- FLIP CARD STYLES --- */
-        .flip-card-container {
-            perspective: 1500px;
-            cursor: none; /* Keep custom cursor */
-        }
-
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-        }
-
-        .flip-card-container.flipped .flip-card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden; /* Safari */
-            backface-visibility: hidden;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            /* Metallic Border Effect */
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        /* Front Side: Metallic Space Age */
-        .flip-card-front {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-        }
-
-        /* Subtle metallic shine animation on hover */
-        .flip-card-container:hover .flip-card-front::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 200%; height: 100%;
-            background: linear-gradient(115deg, transparent, transparent, rgba(255,255,255,0.05), transparent);
-            animation: shine 1.5s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(200%); }
-        }
-
-        /* Back Side: Information */
-        .flip-card-back {
-            background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%); /* Indigo tint for active side */
-            color: white;
-            transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: start;
-            padding: 2rem;
-            text-align: left;
-            border: 1px solid rgba(99, 102, 241, 0.5); /* Highlight border */
-        }
-
-        /* Tactile click effect */
-        .flip-card-container:active .flip-card-inner {
-            scale: 0.98;
-        }
-
-        /* Icon Glow */
-        .icon-glow {
-            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6));
-        }
-
-        .section-title-line {
-            display: inline-block;
-            width: 60px;
-            height: 2px;
-            background: #6366f1;
-            margin-bottom: 6px;
-            margin-right: 12px;
-        }
-    </style>
-</head>
-<body class="antialiased selection:bg-indigo-500 selection:text-white">
-
-    <!-- Custom Cursor -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
-
-    <!-- Background Stars (Parallax Layer 1) -->
-    <div class="fixed inset-0 z-0 opacity-40 pointer-events-none" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 50px 50px;"></div>
-
-    <!-- Main Container -->
-    <main class="relative z-10 w-full min-h-screen flex flex-col items-center pb-20">
-
-        <!-- Header / Hero (Simplified) -->
-        <header class="w-full max-w-7xl mx-auto pt-20 pb-12 px-6 text-center relative">
-            
-            <!-- Three.js Canvas Container (Behind text) -->
-            <div id="canvas-container" class="absolute top-0 left-0 w-full h-[600px] -z-10 opacity-60 pointer-events-none"></div>
-
-            <h1 class="font-display font-extrabold text-5xl md:text-7xl mb-4 tracking-tight reveal-anim">
-                TECHNOLOGY <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300">& SECURITY</span>
-            </h1>
-            <p class="font-mono text-slate-400 text-sm md:text-base tracking-widest uppercase reveal-anim delay-100">
-                Financial Services Infrastructure Division
-            </p>
-            <div class="mt-8 w-24 h-1 bg-gradient-to-r from-indigo-600 to-transparent mx-auto rounded-full reveal-anim delay-200"></div>
-        </header>
-
-        <!-- Flip Card Grid -->
-        <section class="w-full max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <!-- Card 1: Information Security -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">01</div>
-                        <svg class="w-20 h-20 text-indigo-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">Info Security</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Cyber Defense</p>
-                        <div class="absolute bottom-6 text-indigo-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-indigo-300 font-bold mb-3 font-display text-lg">Protectors of Capital</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Safeguarding the bank's reputation and assets via zero-trust architectures and advanced threat detection.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Implementing biometric authentication for mobile banking to prevent fraud."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2: Application Development -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">02</div>
-                        <svg class="w-20 h-20 text-cyan-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">App Development</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Engineering</p>
-                        <div class="absolute bottom-6 text-cyan-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-cyan-300 font-bold mb-3 font-display text-lg">Building the Bank</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Creating robust, user-centric banking platforms and internal tools that drive operational efficiency.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Developing a low-latency high-frequency trading platform for wealth management."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Digital Adoption -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">03</div>
-                        <svg class="w-20 h-20 text-purple-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">Digital Adoption</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Change Mgmt</p>
-                        <div class="absolute bottom-6 text-purple-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-purple-300 font-bold mb-3 font-display text-lg">Culture Shift</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Driving the cultural and technical shift towards digital-first banking through training and engagement.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Training 5,000 branch staff on new AI-driven CRM tools to improve client relationships."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: FP&A Tech -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">04</div>
-                        <svg class="w-20 h-20 text-emerald-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">FP&A Tech</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Financial Planning</p>
-                        <div class="absolute bottom-6 text-emerald-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-emerald-300 font-bold mb-3 font-display text-lg">Precision Forecasting</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Empowering decision-making with precision tools for forecasting, budgeting, and real-time ledger analysis.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Automating CCAR regulatory reporting submission to the Federal Reserve."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 5: Data & Analytics -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">05</div>
-                        <svg class="w-20 h-20 text-blue-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">Data & Analytics</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Business Intelligence</p>
-                        <div class="absolute bottom-6 text-blue-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-blue-300 font-bold mb-3 font-display text-lg">Strategic Insights</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Transforming raw financial data into strategic insights to personalize experiences and optimize credit risk.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Using ML to analyze credit card transaction patterns for real-time fraud detection."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 6: Infrastructure -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">06</div>
-                        <svg class="w-20 h-20 text-sky-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">Infrastructure</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Cloud Services</p>
-                        <div class="absolute bottom-6 text-sky-300 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-sky-300 font-bold mb-3 font-display text-lg">Resilient Core</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Delivering resilient, scalable hybrid-cloud environments for 24/7 banking availability and core transaction processing.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Migrating legacy mainframe ledgers to a secure, private cloud environment."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 7: Enterprise Architecture -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">07</div>
-                        <svg class="w-20 h-20 text-orange-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">Enterprise Arch</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Strategy & Standards</p>
-                        <div class="absolute bottom-6 text-orange-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-orange-300 font-bold mb-3 font-display text-lg">The Blueprint</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Designing the technical blueprint for a scalable technology ecosystem aligned with long-term banking strategy.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Standardizing API gateways to enable Open Banking integration with FinTech partners."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 8: Service Desk -->
-            <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <!-- Front -->
-                    <div class="flip-card-front">
-                        <div class="absolute top-6 right-6 text-slate-500 font-mono text-xs">08</div>
-                        <svg class="w-20 h-20 text-rose-400 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <h3 class="font-display text-2xl font-bold text-slate-200 tracking-wide">IT Service Desk</h3>
-                        <p class="text-xs text-slate-500 mt-2 font-mono uppercase">Support Operations</p>
-                        <div class="absolute bottom-6 text-rose-400 text-xs flex items-center gap-2">
-                            <span>Tap to Flip</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                        </div>
-                    </div>
-                    <!-- Back -->
-                    <div class="flip-card-back">
-                        <h4 class="text-rose-300 font-bold mb-3 font-display text-lg">Business Continuity</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                            Ensuring business continuity with rapid incident resolution and VIP support for critical banking units.
-                        </p>
-                        <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-500/20 w-full">
-                            <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
-                            <p class="text-xs text-slate-400 italic">"Providing dedicated 24/7 trading floor support to ensure zero downtime during market hours."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <script>
-        // --- 1. CUSTOM CURSOR LOGIC ---
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorOutline = document.querySelector('.cursor-outline');
-        const hoverables = document.querySelectorAll('.hoverable');
-
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-
-            cursorDot.style.left = `${posX}px`;
-            cursorDot.style.top = `${posY}px`;
-
-            cursorOutline.animate({
-                left: `${posX}px`,
-                top: `${posY}px`
-            }, { duration: 500, fill: "forwards" });
-        });
-
-        hoverables.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorOutline.classList.add('hovered');
-            });
-            el.addEventListener('mouseleave', () => {
-                cursorOutline.classList.remove('hovered');
-            });
-        });
-
-        // --- 2. ANIMATIONS ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Header Reveal
-        gsap.from(".reveal-anim", {
-            y: 30,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "power3.out"
-        });
-
-        // Cards Stagger
-        gsap.from(".flip-card-container", {
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.1,
-            ease: "power2.out",
-            delay: 0.5
-        });
-
-        // --- 3. THREE.JS HERO ANIMATION (Background) ---
-        const initThreeJS = () => {
-            const container = document.getElementById('canvas-container');
-            const scene = new THREE.Scene();
-            
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.z = 5;
-
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-
-            // Particles / Network
-            const geometry = new THREE.IcosahedronGeometry(2.8, 1);
-            const material = new THREE.MeshBasicMaterial({ 
-                color: 0x6366f1, 
-                wireframe: true,
-                transparent: true,
-                opacity: 0.15
-            });
-            const sphere = new THREE.Mesh(geometry, material);
-            
-            // Add stars
-            const starsGeo = new THREE.BufferGeometry();
-            const starsCount = 400;
-            const posArray = new Float32Array(starsCount * 3);
-            for(let i = 0; i < starsCount * 3; i++) {
-                posArray[i] = (Math.random() - 0.5) * 20;
+        <style>
+            body {
+                background-color: #0f172a;
+                color: #ffffff; /* Default to white for high contrast */
+                cursor: none;
+                overflow-x: hidden;
+                font-family: 'Inter', sans-serif;
             }
-            starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const starsMat = new THREE.PointsMaterial({
-                size: 0.03,
-                color: 0x94a3b8
+
+            /* Custom Cursor - Reduced size by ~60% */
+            .cursor-dot, .cursor-outline {
+                position: fixed;
+                top: 0; left: 0;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                z-index: 9999;
+                pointer-events: none;
+            }
+            .cursor-dot { width: 8px; height: 8px; background-color: white; }
+            
+            .cursor-outline {
+                width: 16px; /* Reduced from 40px */
+                height: 16px; /* Reduced from 40px */
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                transition: width 0.2s, height 0.2s, background-color 0.2s;
+            }
+            body:hover .cursor-outline.hovered {
+                width: 24px; /* Reduced from 60px */
+                height: 24px; /* Reduced from 60px */
+                background-color: rgba(99, 102, 241, 0.2);
+                border-color: #6366f1;
+                backdrop-filter: blur(2px);
+            }
+
+            /* --- FLIP CARD STYLES --- */
+            .flip-card-container {
+                perspective: 1500px;
+                cursor: none;
+            }
+
+            .flip-card-inner {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                transform-style: preserve-3d;
+                box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            }
+
+            .flip-card-container.flipped .flip-card-inner {
+                transform: rotateY(180deg);
+            }
+
+            .flip-card-front, .flip-card-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                border-radius: 1.5rem;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.3); /* Higher contrast border */
+                box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+            }
+
+            /* Front Side: Metallic Space Age */
+            .flip-card-front {
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 2;
+            }
+
+            /* Metallic shine animation on hover */
+            .flip-card-container:hover .flip-card-front::after {
+                content: '';
+                position: absolute;
+                top: 0; left: -100%;
+                width: 200%; height: 100%;
+                background: linear-gradient(115deg, transparent, transparent, rgba(255,255,255,0.1), transparent);
+                animation: shine 1.5s infinite;
+            }
+
+            @keyframes shine {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(200%); }
+            }
+
+            /* Back Side: Information */
+            .flip-card-back {
+                background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+                color: white;
+                transform: rotateY(180deg);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: start;
+                padding: 2rem;
+                text-align: left;
+                border: 2px solid rgba(99, 102, 241, 0.6);
+            }
+
+            /* Tactile click effect */
+            .flip-card-container:active .flip-card-inner {
+                scale: 0.98;
+            }
+
+            /* Icon Glow */
+            .icon-glow {
+                filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.8));
+            }
+
+            /* Text High Contrast Overrides */
+            p {
+                color: #e0e7ff; /* Very light indigo/white */
+                text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            }
+            
+            .sub-text {
+                color: #c7d2fe; /* Light indigo */
+                font-weight: 500;
+            }
+
+            /* Diagram Styles for the Big Card */
+            .diagram-node {
+                fill: #1e1b4b;
+                stroke: #818cf8;
+                stroke-width: 2;
+            }
+            .diagram-line {
+                stroke: #6366f1;
+                stroke-width: 2;
+                stroke-dasharray: 5;
+                animation: dash 30s linear infinite;
+            }
+            @keyframes dash {
+                to { stroke-dashoffset: -1000; }
+            }
+        </style>
+    </head>
+    <body class="antialiased selection:bg-indigo-500 selection:text-white">
+
+        <!-- Custom Cursor -->
+        <div class="cursor-dot"></div>
+        <div class="cursor-outline"></div>
+
+        <!-- Background Stars (Parallax Layer 1) -->
+        <div class="fixed inset-0 z-0 opacity-40 pointer-events-none" style="background-image: radial-gradient(white 1.5px, transparent 1.5px); background-size: 50px 50px;"></div>
+
+        <!-- Main Container -->
+        <main class="relative z-10 w-full min-h-screen flex flex-col items-center pb-20">
+
+            <!-- Header / Hero -->
+            <header class="w-full max-w-7xl mx-auto pt-20 pb-12 px-6 text-center relative">
+                <div id="canvas-container" class="absolute top-0 left-0 w-full h-[600px] -z-10 opacity-60 pointer-events-none"></div>
+
+                <h1 class="font-display font-extrabold text-5xl md:text-7xl mb-4 tracking-tight reveal-anim text-white drop-shadow-lg">
+                    TECHNOLOGY <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-cyan-200">& SECURITY</span>
+                </h1>
+                <p class="font-mono text-indigo-100 text-sm md:text-base tracking-widest uppercase reveal-anim delay-100 font-bold">
+                    Regulatory & Financial Services Infrastructure
+                </p>
+                <div class="mt-8 w-24 h-1 bg-gradient-to-r from-indigo-500 to-transparent mx-auto rounded-full reveal-anim delay-200"></div>
+            </header>
+
+            <!-- Flip Card Grid -->
+            <section class="w-full max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                
+                <!-- Card 1: Information Security -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">01</div>
+                            <svg class="w-20 h-20 text-indigo-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">Info Security</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Cyber Defense</p>
+                            <div class="absolute bottom-6 text-indigo-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-indigo-200 font-bold mb-3 font-display text-lg">Protectors of Capital</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Safeguarding the bank's reputation and assets via zero-trust architectures and advanced threat detection in a highly regulated environment.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-indigo-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Implementing biometric authentication for mobile banking to prevent fraud."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Application Development -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">02</div>
+                            <svg class="w-20 h-20 text-cyan-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">App Development</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Engineering</p>
+                            <div class="absolute bottom-6 text-cyan-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-cyan-200 font-bold mb-3 font-display text-lg">Building the Bank</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Creating robust, user-centric banking platforms and internal tools that drive operational efficiency and customer retention.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-cyan-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Developing a low-latency high-frequency trading platform for wealth management."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Digital Adoption -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">03</div>
+                            <svg class="w-20 h-20 text-purple-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">Digital Adoption</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Change Mgmt</p>
+                            <div class="absolute bottom-6 text-purple-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-purple-200 font-bold mb-3 font-display text-lg">Culture Shift</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Driving the cultural and technical shift towards digital-first banking through training, policy education, and engagement.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-purple-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Training 5,000 branch staff on new AI-driven CRM tools to improve client relationships."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: FP&A Tech -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">04</div>
+                            <svg class="w-20 h-20 text-emerald-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">FP&A Tech</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Financial Planning</p>
+                            <div class="absolute bottom-6 text-emerald-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-emerald-200 font-bold mb-3 font-display text-lg">Precision Forecasting</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Empowering executive decision-making with precision tools for forecasting, budgeting, and real-time ledger analysis.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-emerald-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Automating CCAR regulatory reporting submission to the Federal Reserve."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Data & Analytics -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">05</div>
+                            <svg class="w-20 h-20 text-blue-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">Data & Analytics</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Business Intelligence</p>
+                            <div class="absolute bottom-6 text-blue-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-blue-200 font-bold mb-3 font-display text-lg">Strategic Insights</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Transforming raw financial data into strategic insights to personalize experiences and optimize credit risk models.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-blue-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Using ML to analyze credit card transaction patterns for real-time fraud detection."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Infrastructure -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">06</div>
+                            <svg class="w-20 h-20 text-sky-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">Infrastructure</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Cloud Services</p>
+                            <div class="absolute bottom-6 text-sky-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-sky-200 font-bold mb-3 font-display text-lg">Resilient Core</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Delivering resilient, scalable hybrid-cloud environments for 24/7 banking availability and core transaction processing.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-sky-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Migrating legacy mainframe ledgers to a secure, private cloud environment."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7: Enterprise Architecture -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">07</div>
+                            <svg class="w-20 h-20 text-orange-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">Enterprise Arch</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Strategy & Standards</p>
+                            <div class="absolute bottom-6 text-orange-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-orange-200 font-bold mb-3 font-display text-lg">The Blueprint</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Designing the technical blueprint for a scalable technology ecosystem aligned with regulatory policy and long-term strategy.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-orange-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Standardizing API gateways to enable Open Banking integration with FinTech partners."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8: IT Client Services -->
+                <div class="flip-card-container h-[350px] hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="absolute top-6 right-6 text-white font-mono text-sm font-bold">08</div>
+                            <svg class="w-20 h-20 text-rose-300 mb-6 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-wide">IT Client Services</h3>
+                            <p class="sub-text mt-2 font-mono uppercase text-xs">Workforce Enablement</p>
+                            <div class="absolute bottom-6 text-rose-300 text-xs flex items-center gap-2 font-bold">
+                                <span>TAP TO INSPECT</span> <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-rose-200 font-bold mb-3 font-display text-lg">Internal Operations</h4>
+                            <p class="text-sm leading-relaxed mb-4">
+                                Managing the complete employee technology lifecycle. We deploy secure hardware, provision software, and ensure policy-compliant workstations.
+                            </p>
+                            <div class="bg-indigo-900/50 p-3 rounded-lg border border-indigo-400/30 w-full">
+                                <p class="text-[10px] text-rose-200 uppercase font-bold mb-1">Financial Example:</p>
+                                <p class="text-xs text-white italic">"Rolling out encrypted laptops for new policy analysts and trading desk setups."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW SECTION: Master Synergy Map -->
+            <section class="w-full max-w-4xl mx-auto px-6 mb-20">
+                <div class="flip-card-container h-[400px] w-full hoverable" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        
+                        <!-- Synergy Front: The Map -->
+                        <div class="flip-card-front bg-slate-900">
+                            <h3 class="font-display text-3xl font-bold text-white tracking-wide mb-8">TECHNOLOGY ENABLEMENT MAP</h3>
+                            
+                            <!-- SVG Map -->
+                            <div class="w-full h-full max-h-[250px] relative flex justify-center items-center">
+                                <svg class="w-full h-full" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Connecting Lines (Feeding INTO the center) -->
+                                    <line x1="100" y1="50" x2="170" y2="85" class="diagram-line" />
+                                    <line x1="300" y1="50" x2="230" y2="85" class="diagram-line" />
+                                    <line x1="100" y1="150" x2="170" y2="115" class="diagram-line" />
+                                    <line x1="300" y1="150" x2="230" y2="115" class="diagram-line" />
+
+                                    <!-- Central Node: The Consumer (End Users) -->
+                                    <circle cx="200" cy="100" r="45" class="diagram-node" stroke="#6366f1" stroke-width="4" />
+                                    <text x="200" y="98" text-anchor="middle" fill="#ffffff" font-size="10" font-family="sans-serif" font-weight="bold">END</text>
+                                    <text x="200" y="112" text-anchor="middle" fill="#ffffff" font-size="10" font-family="sans-serif" font-weight="bold">USERS</text>
+
+                                    <!-- Outer Nodes: The Enablers -->
+                                    <g>
+                                        <!-- Top Left: Software -->
+                                        <circle cx="100" cy="50" r="30" class="diagram-node" />
+                                        <text x="100" y="48" text-anchor="middle" fill="#a5b4fc" font-size="9" font-weight="bold">CUSTOM</text>
+                                        <text x="100" y="60" text-anchor="middle" fill="white" font-size="9" font-weight="bold">APPS</text>
+                                    </g>
+                                    <g>
+                                        <!-- Top Right: Hardware -->
+                                        <circle cx="300" cy="50" r="30" class="diagram-node" />
+                                        <text x="300" y="48" text-anchor="middle" fill="#a5b4fc" font-size="9" font-weight="bold">SECURE</text>
+                                        <text x="300" y="60" text-anchor="middle" fill="white" font-size="9" font-weight="bold">HARDWARE</text>
+                                    </g>
+                                    <g>
+                                        <!-- Bottom Left: Data -->
+                                        <circle cx="100" cy="150" r="30" class="diagram-node" />
+                                        <text x="100" y="148" text-anchor="middle" fill="#a5b4fc" font-size="9" font-weight="bold">RISK</text>
+                                        <text x="100" y="160" text-anchor="middle" fill="white" font-size="9" font-weight="bold">DATA</text>
+                                    </g>
+                                    <g>
+                                        <!-- Bottom Right: Security -->
+                                        <circle cx="300" cy="150" r="30" class="diagram-node" />
+                                        <text x="300" y="148" text-anchor="middle" fill="#a5b4fc" font-size="9" font-weight="bold">ACCESS</text>
+                                        <text x="300" y="160" text-anchor="middle" fill="white" font-size="9" font-weight="bold">CONTROL</text>
+                                    </g>
+                                </svg>
+                            </div>
+                            
+                            <div class="absolute bottom-8 text-indigo-300 text-xs flex items-center gap-2 font-bold uppercase tracking-widest">
+                                <span>How Tech Empowers The Bank</span> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+
+                        <!-- Synergy Back: Detailed Description -->
+                        <div class="flip-card-back flex flex-col justify-center items-center text-center p-12">
+                            <h4 class="text-white font-bold mb-6 font-display text-2xl">Empowering Everyone</h4>
+                            <p class="text-base text-white leading-relaxed max-w-2xl mb-6">
+                                We act as the operational foundation for the bank's entire community of <span class="text-indigo-300 font-bold">End Users</span>. <span class="text-indigo-300 font-bold">IT Client Services</span> equips every employee with encrypted hardware and compliant workstations, while <span class="text-indigo-300 font-bold">Application Development</span> builds the bespoke audit tools they use daily.
+                            </p>
+                            <p class="text-base text-white leading-relaxed max-w-2xl">
+                                Simultaneously, our <span class="text-indigo-300 font-bold">Data & Analytics</span> division feeds real-time risk models into executive dashboards, all wrapped in a zero-trust environment provided by <span class="text-indigo-300 font-bold">Information Security</span>. We provide the tools; they drive the business.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <script>
+            // --- 1. CUSTOM CURSOR LOGIC ---
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            const hoverables = document.querySelectorAll('.hoverable');
+
+            window.addEventListener('mousemove', (e) => {
+                const posX = e.clientX;
+                const posY = e.clientY;
+
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
             });
-            const starsMesh = new THREE.Points(starsGeo, starsMat);
 
-            scene.add(sphere);
-            scene.add(starsMesh);
+            hoverables.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorOutline.classList.add('hovered');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorOutline.classList.remove('hovered');
+                });
+            });
 
-            const animate = () => {
-                requestAnimationFrame(animate);
-                sphere.rotation.y += 0.002;
-                sphere.rotation.x += 0.001;
-                starsMesh.rotation.y -= 0.0005;
-                renderer.render(scene, camera);
+            // --- 2. ANIMATIONS ---
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Header Reveal
+            gsap.from(".reveal-anim", {
+                y: 30,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+
+            // Cards Stagger
+            gsap.from(".flip-card-container", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power2.out",
+                delay: 0.5
+            });
+
+            // --- 3. THREE.JS HERO ANIMATION ---
+            const initThreeJS = () => {
+                const container = document.getElementById('canvas-container');
+                const scene = new THREE.Scene();
+                
+                const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+                camera.position.z = 5;
+
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                container.appendChild(renderer.domElement);
+
+                // Particles / Network
+                const geometry = new THREE.IcosahedronGeometry(2.8, 1);
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: 0x818cf8, // Lighter indigo for better visibility 
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.2
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                
+                // Add stars
+                const starsGeo = new THREE.BufferGeometry();
+                const starsCount = 400;
+                const posArray = new Float32Array(starsCount * 3);
+                for(let i = 0; i < starsCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 20;
+                }
+                starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                const starsMat = new THREE.PointsMaterial({
+                    size: 0.03,
+                    color: 0xffffff // White stars
+                });
+                const starsMesh = new THREE.Points(starsGeo, starsMat);
+
+                scene.add(sphere);
+                scene.add(starsMesh);
+
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    sphere.rotation.y += 0.002;
+                    sphere.rotation.x += 0.001;
+                    starsMesh.rotation.y -= 0.0005;
+                    renderer.render(scene, camera);
+                };
+
+                animate();
+
+                window.addEventListener('resize', () => {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                });
             };
 
-            animate();
+            initThreeJS();
 
-            window.addEventListener('resize', () => {
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
-            });
-        };
-
-        initThreeJS();
-
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+    </html>
